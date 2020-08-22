@@ -1,0 +1,23 @@
+<form [formGroup]="imageUploadForm">
+
+  <div formGroupName="gridDimensions">
+    <label>
+      Width:
+      <input type="number" min="1" formControlName="width">
+    </label>
+
+    <label>
+      Height:
+      <input type="number" min="1" formControlName="height">
+    </label>
+
+    Is valid? {{imageUploadForm.valid}}
+  </div>
+
+  <app-file-upload formControlName="uploadedImage"></app-file-upload>
+
+  <app-symbol-grid
+    [numberOfColumns]="gridWidth"
+    [numberOfRows]="gridHeight"
+  ></app-symbol-grid>
+</form>

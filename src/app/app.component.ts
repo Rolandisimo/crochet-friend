@@ -7,4 +7,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'crochet-friend';
+
+  onBlur(): void {
+    console.log('Blur');
+  }
+
+  onKeyUp(value: string): void {
+    console.log('APP onKeyUp', value);
+  }
 }
