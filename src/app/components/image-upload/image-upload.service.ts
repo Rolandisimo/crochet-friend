@@ -1,31 +1,29 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ImageUploadConfig } from './types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageUploadService {
-  private gridDimensions = new BehaviorSubject<ImageUploadConfig['gridDimensions'] | undefined>(undefined);
-  private imageFile = new BehaviorSubject<File | null>(null);
+  private _gridDimensions = new BehaviorSubject<ImageUploadConfig['gridDimensions']>({ columns: 10, rows: 10 });
+  public gridDimensions = this._gridDimensions.asObservable();
+
+  private _imageFile = new BehaviorSubject<File | null>(null);
+  public imageFile = this._imageFile.asObservable();
+
+  private _newCachedImage = new BehaviorSubject<HTMLImageElement | null>(null);
+  public newCachedImage = this._newCachedImage.asObservable();
+
   private cachedImages = new Map<string, HTMLImageElement>();
-  public newCachedImage = new BehaviorSubject<HTMLImageElement | null>(null);
 
-  gridSubject(): BehaviorSubject<ImageUploadConfig['gridDimensions'] | undefined> {
-    return this.gridDimensions;
-  }
-
+  // TODO: Move to proper place
   setGrid(dimensions: ImageUploadConfig['gridDimensions']): void {
-    this.gridDimensions.next(dimensions);
-  }
-
-  imageFileSubject(): BehaviorSubject<File | null> {
-    return this.imageFile;
+    this._gridDimensions.next(dimensions);
   }
 
   setImageFile(imageFile: File | null): void {
-    console.log("SET", imageFile)
-    this.imageFile.next(imageFile);
+    this._imageFile.next(imageFile);
   }
 
   constructor() { }
@@ -36,6 +34,6 @@ export class ImageUploadService {
 
   public setCachedImage(name: string, image: HTMLImageElement): void {
     this.cachedImages.set(name, image);
-    this.newCachedImage.next(image);
+    this._newCachedImage.next(image);
   }
 }

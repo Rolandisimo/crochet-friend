@@ -6,7 +6,7 @@ export interface GridImageConfig {
   image: HTMLImageElement;
 }
 
-export class GridImage {
+export class GridImage implements GridImageConfig {
   x: number;
   y: number;
   width: number;

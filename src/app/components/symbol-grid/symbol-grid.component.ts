@@ -11,7 +11,6 @@ import { fromEvent, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ImageUploadService } from '../image-upload/image-upload.service';
 import { GridImageCoordinator } from './grid-image-coordinator';
-import { GridImage } from './grid-image';
 
 interface LineSetupOptions {
   stepSize: number;
@@ -53,13 +52,7 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.imageService.gridSubject().subscribe((grid) => {
-        if (!grid) {
-          return;
-        }
-
-        const { columns, rows } = grid;
-
+      this.imageService.gridDimensions.subscribe(({ columns, rows }) => {
         this.numberOfColumns = columns;
         this.numberOfRows = rows;
 
@@ -69,7 +62,7 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
     );
 
     this.subscriptions.add(
-      this.imageService.imageFileSubject().subscribe((imageFile) => {
+      this.imageService.imageFile.subscribe((imageFile) => {
         this.file = imageFile;
       })
     );
@@ -127,7 +120,6 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private redrawAllImages(): void {
     this.gridCoordinator.gridImages.forEach((gridImage) => {
-
       this.drawImageOnOverlay({
         image: gridImage.image,
         ...this.getImageXY(gridImage.x, gridImage.y),
@@ -226,15 +218,13 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
     const { x, y } = this.getImageXY(coordinates.x, coordinates.y);
     const image = await this.getImage(this.file);
 
-    this.gridCoordinator.gridImages.push(
-      new GridImage({
-        image,
-        x,
-        y,
-        width: this.cellWidth,
-        height: this.cellHeight,
-      })
-    );
+    this.gridCoordinator.addImage({
+      image,
+      x,
+      y,
+      width: this.cellWidth,
+      height: this.cellHeight,
+    });
 
     this.drawImageOnOverlay({
       image,
