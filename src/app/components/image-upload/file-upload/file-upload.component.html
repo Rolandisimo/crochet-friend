@@ -1,5 +1,10 @@
 <div class="uploadArea">
   <label class="uploadLabel" for="imageUpload">Upload image</label>
   <div>{{file ? file.name : "Please upload an image"}}</div>
-  <input id="imageUpload" style="display: none;" type="file" />
+  <input
+    id="imageUpload"
+    style="display: none;"
+    type="file"
+    [attr.accept]="acceptExtensions"
+  />
 </div>

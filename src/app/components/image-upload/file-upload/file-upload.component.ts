@@ -2,8 +2,8 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
-  FormControl,
 } from '@angular/forms';
+import { allowedTypes } from './allowedTypes';
 
 @Component({
   selector: 'app-file-upload',
@@ -18,24 +18,30 @@ import {
   ]
 })
 export class FileUploadComponent implements OnInit, ControlValueAccessor {
+
+  constructor() { }
   public file: File | null = null;
   public isDisabled = false;
-  public onChange = (file: File | null) => {};
+  public acceptExtensions = allowedTypes.join(',');
+  public onChange = (_file: File) => {};
   public onTouched = () => {};
 
   @HostListener('change', ['$event.target.files'])
   public emitFiles( event: FileList ): void {
     const file = event && event.item(0);
+    if (!file || !allowedTypes.includes(file.type)) {
+      return;
+    }
+
     this.onChange(file);
     this.file = file;
-    console.log('emitFiles', file);
   }
 
   writeValue(file: null): void {
     this.file = file;
   }
 
-  registerOnChange(fn: (file: File | null) => void): void {
+  registerOnChange(fn: (file: File) => void): void {
     this.onChange = fn;
   }
 
@@ -46,8 +52,6 @@ export class FileUploadComponent implements OnInit, ControlValueAccessor {
   setDisabledState(disabled: boolean): void {
     this.isDisabled = disabled;
   }
-
-  constructor() { }
 
   ngOnInit(): void {
   }
