@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -9,6 +9,7 @@ import { allowedTypes } from './allowedTypes';
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -18,30 +19,31 @@ import { allowedTypes } from './allowedTypes';
   ]
 })
 export class FileUploadComponent implements OnInit, ControlValueAccessor {
-
-  constructor() { }
-  public file: File | null = null;
+  public files: File[] = [];
   public isDisabled = false;
   public acceptExtensions = allowedTypes.join(',');
-  public onChange = (_file: File) => {};
+  public onChange = (_files: File[]) => {};
   public onTouched = () => {};
 
   @HostListener('change', ['$event.target.files'])
-  public emitFiles( event: FileList ): void {
-    const file = event && event.item(0);
-    if (!file || !allowedTypes.includes(file.type)) {
-      return;
+  public emitFiles(fileList: FileList): void {
+    const files: File[] = [];
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList.item(i);
+      if (file && allowedTypes.includes(file.type)) {
+        files.push(file);
+      }
     }
 
-    this.onChange(file);
-    this.file = file;
+    this.onChange(files);
+    this.files = files;
   }
 
-  writeValue(file: null): void {
-    this.file = file;
+  writeValue(files: File[]): void {
+    this.files = files;
   }
 
-  registerOnChange(fn: (file: File) => void): void {
+  registerOnChange(fn: (files: File[]) => void): void {
     this.onChange = fn;
   }
 

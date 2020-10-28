@@ -3,5 +3,5 @@ export interface ImageUploadConfig {
     columns: number;
     rows: number;
   };
-  uploadedImage: File | null;
+  uploadedImage: File[];
 }

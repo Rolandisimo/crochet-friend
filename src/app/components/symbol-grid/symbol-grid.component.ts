@@ -36,7 +36,6 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
   private overlayCanvasContext: CanvasRenderingContext2D | null = null;
   private numberOfColumns = 10;
   private numberOfRows = 10;
-  private file: File | null = null;
   private gridCoordinator = new GridImageCoordinator();
 
   constructor(private imageService: ImageUploadService) {
@@ -58,12 +57,6 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.isAnimationActive = true;
         this.update();
-      })
-    );
-
-    this.subscriptions.add(
-      this.imageService.imageFile.subscribe((imageFile) => {
-        this.file = imageFile;
       })
     );
   }
@@ -91,10 +84,7 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setGrid(): void {
-    if (!this.canvasElement) {
-      return;
-    }
-    if (!this.overlayElement) {
+    if (!this.canvasElement || !this.overlayElement) {
       return;
     }
 
@@ -211,12 +201,16 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private async onClickOverlay(coordinates: Coordinates): Promise<void> {
-    if (!this.overlayCanvasContext || !this.file) {
+    if (!this.overlayCanvasContext) {
       return;
     }
 
     const { x, y } = this.getImageXY(coordinates.x, coordinates.y);
-    const image = await this.getImage(this.file);
+
+    const image = this.imageService.getCurrentImage();
+    if (!image) {
+      return;
+    }
 
     this.gridCoordinator.addImage({
       image,
@@ -238,29 +232,8 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    (this.overlayCanvasContext as any).mozImageSmoothingEnabled = false;
-    (this.overlayCanvasContext as any).webkitImageSmoothingEnabled = false;
-    (this.overlayCanvasContext as any).msImageSmoothingEnabled = false;
     this.overlayCanvasContext.imageSmoothingEnabled = false;
     this.overlayCanvasContext?.drawImage(image, x, y, this.cellWidth, this.cellHeight);
-  }
-
-  private async getImage(file: File): Promise<HTMLImageElement> {
-    const cachedImage = this.imageService.getCachedImage(file.name);
-    if (cachedImage) {
-      console.log('got cached');
-      return cachedImage;
-    }
-
-    return new Promise<HTMLImageElement>((resolve) => {
-      const img = new Image(this.cellWidth, this.cellHeight);
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        console.log('got created');
-        this.imageService.setCachedImage(file.name, img);
-        resolve(img);
-      };
-    });
   }
 
   ngOnDestroy(): void {

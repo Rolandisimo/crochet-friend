@@ -1,1 +1,19 @@
-<div #imgTarget></div>
+<div #imgTarget class="imagesContainer">
+  <div
+    *ngFor="let image of imageService.images | async"
+    class="imageContainer"
+    [ngClass]="{
+      isSelected: imageService.getCurrentImage()?.src === image.src
+    }"
+  >
+    <img
+      [src]="sanitize(image.src)"
+      (click)="imageService.setCurrentImage(image)"
+      [ngStyle]="{
+        'width.px': image.width,
+        'height.px': image.height
+      }"
+    />
+    <button class="removeImageIcon" (click)="imageService.removeImage(image)">x</button>
+  </div>
+</div>

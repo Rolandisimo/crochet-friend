@@ -1,10 +1,12 @@
 <div class="uploadArea">
   <label class="uploadLabel" for="imageUpload">Upload image</label>
-  <div>{{file ? file.name : "Please upload an image"}}</div>
+  <p *ngIf="files.length">Uploaded {{files.length}} files</p>
+
   <input
     id="imageUpload"
     style="display: none;"
     type="file"
     [attr.accept]="acceptExtensions"
+    multiple
   />
 </div>

@@ -12,11 +12,11 @@ import { ImageUploadConfig } from './types';
 import { allowedTypes } from './file-upload/allowedTypes';
 
 function isFileUploadValid(control: FormControl): any {
-  const file = control.value;
-  if (!file) {
+  const files: any[] = control.value;
+  if (!files) {
     return null;
   }
-  const isValid = allowedTypes.includes(file.type);
+  const isValid = files.every(file => allowedTypes.includes(file.type));
   if (isValid) {
     return null;
   } else {
@@ -32,7 +32,6 @@ function isFileUploadValid(control: FormControl): any {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageUploadComponent implements OnInit, OnDestroy {
-  file: File | null = null;
   private inputValidators: ValidatorFn[] = [
     Validators.required,
     Validators.pattern(/\d+/),
@@ -50,7 +49,7 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
       columns: [10, this.inputValidators],
       rows: [10, this.inputValidators],
     }),
-    uploadedImage: [null, [Validators.required, isFileUploadValid]],
+    uploadedImage: [[], [Validators.required, isFileUploadValid]],
   });
 
   get imageControl(): FormControl {
@@ -87,17 +86,10 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     ) {
       this.imageUpload.setGrid(currentProps.gridDimensions);
     }
-
-    if (
-      prevProps?.uploadedImage?.name !== currentProps.uploadedImage?.name
-      || prevProps?.uploadedImage?.size !== currentProps.uploadedImage?.size
-    ) {
-      this.imageUpload.setImageFile(currentProps.uploadedImage);
-    }
   }
 
-  onImageUpload(file: File): void {
-    this.file = file;
+  onImageUpload(files: File[]): void {
+    this.imageUpload.setImageFiles(files);
   }
 
   ngOnDestroy(): void {

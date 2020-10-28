@@ -1,36 +1,19 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { ImageUploadService } from '../image-upload/image-upload.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss']
+  styleUrls: ['./toolbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToolbarComponent implements OnInit, OnDestroy {
-  private subscription = new Subscription();
-  // public images: HTMLImageElement[] = [];
-  constructor(private imageUploadService: ImageUploadService) { }
+export class ToolbarComponent {
+  constructor(public imageService: ImageUploadService, private sanitizer: DomSanitizer) {}
 
   @ViewChild('imgTarget') imgTarget!: ElementRef<HTMLSpanElement>;
-  // @ViewChild('imgTarget') images!: QueryList<HTMLImageElement>;
 
-  ngOnInit(): void {
-    this.subscription.add(
-      this.imageUploadService.newCachedImage.subscribe((image) => {
-        console.log('image', image);
-        if (!image) {
-          return;
-        }
-        this.imgTarget.nativeElement.appendChild(image);
-        // this.images.forEach((imgTarget) => {
-        //   imgTarget.appendChild(image);
-        // });
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  public sanitize(url: string): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 }

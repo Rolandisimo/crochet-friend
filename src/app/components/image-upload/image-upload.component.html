@@ -9,8 +9,6 @@
       Rows:
       <input type="number" min="1" formControlName="rows">
     </label>
-
-    Is valid? {{imageUploadForm.valid}}
   </div>
 
   <app-file-upload (ngModelChange)="onImageUpload($event)" formControlName="uploadedImage"></app-file-upload>
