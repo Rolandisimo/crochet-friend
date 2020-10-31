@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
+import { GridService } from '@components/symbol-grid/grid.service';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { combineAll, map, take } from 'rxjs/operators';
-import { ImageUploadConfig } from './types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageUploadService {
+  constructor(private gridService: GridService) {}
+
   private cachedImages = new Map<string, HTMLImageElement>();
   private _images = new BehaviorSubject<HTMLImageElement[]>(this.getCachedImages());
   public images = this._images.asObservable();
@@ -20,15 +22,14 @@ export class ImageUploadService {
   public setImageFiles(files: File[]): void {
     from(files).pipe(
       take(files.length),
-      map((file) => this.creaImageFile(file)),
+      map((file) => this.createImageFile(file)),
       combineAll(),
-    ).subscribe((data) => {
-      console.log('image', data);
+    ).subscribe(() => {
       this._images.next(this.getCachedImages());
     });
   }
 
-  private creaImageFile(file: File): Observable<HTMLImageElement> {
+  private createImageFile(file: File): Observable<HTMLImageElement> {
     return new Observable((obs) => {
       const cachedImage = this.getCachedImage(file.name);
       if (cachedImage) {
@@ -37,8 +38,7 @@ export class ImageUploadService {
         obs.complete();
       }
 
-      // TODO: Get image dimensions from cell dimensions
-      const img = new Image(50, 50);
+      const img = new Image(this.gridService.getCellWidth(), this.gridService.getCellHeight());
       img.title = file.name;
       img.onload = () => {
         this.setCachedImage(img);

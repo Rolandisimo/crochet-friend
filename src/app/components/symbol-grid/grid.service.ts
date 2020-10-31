@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ImageUploadConfig } from '@components/image-upload/types';
 import { BehaviorSubject } from 'rxjs';
+
+export interface GridDimensions {
+  columns: number;
+  rows: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -8,13 +12,13 @@ import { BehaviorSubject } from 'rxjs';
 export class GridService {
   private cellWidth = 50;
   private cellHeight = 50;
-  private numberOfColumns = 10;
-  private numberOfRows = 10;
+  private numberOfColumns = 50;
+  private numberOfRows = 50;
 
-  private _gridDimensions = new BehaviorSubject<ImageUploadConfig['gridDimensions']>({ columns: 10, rows: 10 });
+  private _gridDimensions = new BehaviorSubject<GridDimensions>({ columns: this.numberOfColumns, rows: this.numberOfRows });
   public gridDimensions = this._gridDimensions.asObservable();
 
-  setGrid(dimensions: ImageUploadConfig['gridDimensions']): void {
+  setGrid(dimensions: GridDimensions): void {
     this._gridDimensions.next(dimensions);
   }
 
