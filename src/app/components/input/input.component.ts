@@ -6,7 +6,7 @@ export type InputType =
   | 'email'
   | 'file'
 ;
-// TODO: Add ControlValueAccessor
+// TODO: Might not need this
 @Component({
   selector: 'app-input',
   templateUrl: './input.component.html',

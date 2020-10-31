@@ -1,15 +1,3 @@
 <form [formGroup]="imageUploadForm">
-  <div formGroupName="gridDimensions">
-    <label>
-      Columns:
-      <input type="number" min="1" formControlName="columns">
-    </label>
-
-    <label>
-      Rows:
-      <input type="number" min="1" formControlName="rows">
-    </label>
-  </div>
-
   <app-file-upload (ngModelChange)="onImageUpload($event)" formControlName="uploadedImage"></app-file-upload>
 </form>

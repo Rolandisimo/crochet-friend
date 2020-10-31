@@ -11,6 +11,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ImageUploadService } from '../image-upload/image-upload.service';
 import { GridImageCoordinator } from './grid-image-coordinator';
+import { GridService } from './grid.service';
 
 interface LineSetupOptions {
   stepSize: number;
@@ -30,15 +31,20 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('overlayCanvas') overlayCanvas?: ElementRef<HTMLCanvasElement>;
   private isAnimationActive = true;
   private subscriptions = new Subscription();
-  private cellWidth = 50;
-  private cellHeight = 50;
+
+  private cellWidth: number = this.gridService.getCellWidth();
+  private cellHeight: number = this.gridService.getCellHeight();
+  private numberOfColumns: number = this.gridService.getNumberOfColumns();
+  private numberOfRows: number = this.gridService.getNumberOfRows();
+
   private context: CanvasRenderingContext2D | null = null;
   private overlayCanvasContext: CanvasRenderingContext2D | null = null;
-  private numberOfColumns = 10;
-  private numberOfRows = 10;
   private gridCoordinator = new GridImageCoordinator();
 
-  constructor(private imageService: ImageUploadService) {
+  constructor(
+    private imageService: ImageUploadService,
+    private gridService: GridService,
+  ) {
     this.update = this.update.bind(this);
   }
 
@@ -50,15 +56,8 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subscriptions.add(
-      this.imageService.gridDimensions.subscribe(({ columns, rows }) => {
-        this.numberOfColumns = columns;
-        this.numberOfRows = rows;
-
-        this.isAnimationActive = true;
-        this.update();
-      })
-    );
+    this.isAnimationActive = true;
+    this.update();
   }
 
   ngAfterViewInit(): void {

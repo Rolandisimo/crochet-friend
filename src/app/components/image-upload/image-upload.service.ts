@@ -7,19 +7,11 @@ import { ImageUploadConfig } from './types';
   providedIn: 'root'
 })
 export class ImageUploadService {
-  private _gridDimensions = new BehaviorSubject<ImageUploadConfig['gridDimensions']>({ columns: 10, rows: 10 });
-  public gridDimensions = this._gridDimensions.asObservable();
-
   private cachedImages = new Map<string, HTMLImageElement>();
   private _images = new BehaviorSubject<HTMLImageElement[]>(this.getCachedImages());
   public images = this._images.asObservable();
 
   private _currentImage: HTMLImageElement | null = null;
-
-  // TODO: Move to proper place
-  setGrid(dimensions: ImageUploadConfig['gridDimensions']): void {
-    this._gridDimensions.next(dimensions);
-  }
 
   public getCurrentImage(): HTMLImageElement | null {
     return this._currentImage;
