@@ -1,14 +1,29 @@
-<div #imgTarget class="imagesContainer">
+<h3>Actions</h3>
+<div class="imagesContainer">
+  <div
+    *ngFor="let action of actions"
+    class="imageContainer action"
+    [ngClass]="{
+      isSelected: currentItem === action
+    }"
+    (click)="onToolbarItemClick(action)"
+  >
+    {{action.type}}
+  </div>
+</div>
+
+<h3>My Images</h3>
+<div class="imagesContainer">
   <div
     *ngFor="let image of imageService.images | async"
     class="imageContainer"
     [ngClass]="{
-      isSelected: imageService.getCurrentImage()?.src === image.src
+      isSelected: currentItem === image
     }"
   >
     <img
       [src]="sanitize(image.src)"
-      (click)="imageService.setCurrentImage(image)"
+      (click)="onToolbarItemClick(image)"
       [ngStyle]="{
         'width.px': image.width,
         'height.px': image.height
