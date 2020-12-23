@@ -24,7 +24,6 @@ export class GridImageCoordinator {
   }
 
   public removeImage(key: string): void {
-    const foo = this._gridImages.delete(key);
-    console.log(foo, key, [...this._gridImages]);
+    this._gridImages.delete(key);
   }
 }
