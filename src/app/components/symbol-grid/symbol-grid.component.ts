@@ -20,6 +20,12 @@ interface LineSetupOptions {
 
 interface Coordinates { x: number; y: number; }
 
+interface ImageWithCoordinates {
+  image: HTMLImageElement;
+  x: number;
+  y: number;
+}
+
 @Component({
   selector: 'app-symbol-grid',
   templateUrl: './symbol-grid.component.html',
@@ -39,13 +45,14 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private context: CanvasRenderingContext2D | null = null;
   private overlayCanvasContext: CanvasRenderingContext2D | null = null;
-  private gridCoordinator = new GridImageCoordinator();
+  private gridCoordinator = GridImageCoordinator.getInstance();
 
   constructor(
     private imageService: ImageUploadService,
     private gridService: GridService,
   ) {
     this.update = this.update.bind(this);
+    this.onClickOverlay = this.onClickOverlay.bind(this);
   }
 
   get canvasElement(): HTMLCanvasElement | undefined {
@@ -77,7 +84,7 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscriptions.add(
       fromEvent<MouseEvent>(this.overlayElement, 'mousedown').pipe(
         map((event) => ({ x: event.offsetX, y: event.offsetY })),
-        tap(this.onClickOverlay.bind(this)),
+        tap(this.onClickOverlay),
       ).subscribe()
     );
   }
@@ -199,18 +206,36 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private restartAnimations(): void {
+    this.isAnimationActive = true;
+    this.update();
+  }
+
   private async onClickOverlay(coordinates: Coordinates): Promise<void> {
     if (!this.overlayCanvasContext) {
       return;
     }
 
-    const { x, y } = this.getImageXY(coordinates.x, coordinates.y);
-
     const image = this.imageService.getCurrentImage();
-    if (!image) {
+    const action = this.imageService.getCurrentAction();
+    if (!image && !action) {
       return;
     }
 
+    const { x, y } = this.getImageXY(coordinates.x, coordinates.y);
+
+    if (action?.type === 'delete') {
+      this.gridCoordinator.removeImage(`${x}, ${y}`);
+    }
+
+    if (image) {
+      this.addAndDrawImageOnGrid({ image, x, y });
+    }
+
+    this.restartAnimations();
+  }
+
+  private addAndDrawImageOnGrid({ image, x, y }: ImageWithCoordinates): void {
     this.gridCoordinator.addImage({
       image,
       x,
@@ -226,13 +251,23 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private drawImageOnOverlay({ image, x, y }: {image: HTMLImageElement, x: number, y: number}): void {
+  private drawImageOnOverlay({ image, x, y }: ImageWithCoordinates): void {
     if (!this.overlayCanvasContext) {
       return;
     }
 
     this.overlayCanvasContext.imageSmoothingEnabled = false;
-    this.overlayCanvasContext?.drawImage(image, x, y, this.cellWidth, this.cellHeight);
+    this.overlayCanvasContext?.drawImage(
+      image,
+      0,
+      0,
+      image.naturalWidth,
+      image.naturalHeight,
+      x,
+      y,
+      this.cellWidth,
+      this.cellHeight,
+    );
   }
 
   ngOnDestroy(): void {

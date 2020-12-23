@@ -10,8 +10,8 @@ export interface GridDimensions {
   providedIn: 'root'
 })
 export class GridService {
-  private cellWidth = 50;
-  private cellHeight = 50;
+  private cellWidth = 64;
+  private cellHeight = 64;
   private numberOfColumns = 50;
   private numberOfRows = 50;
 

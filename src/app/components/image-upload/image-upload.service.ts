@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GridService } from '@components/symbol-grid/grid.service';
+import { Action } from '@components/toolbar/toolbar.types';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { combineAll, map, take } from 'rxjs/operators';
 
@@ -14,9 +15,14 @@ export class ImageUploadService {
   public images = this._images.asObservable();
 
   private _currentImage: HTMLImageElement | null = null;
+  private _currentAction: Action | null = null;
 
   public getCurrentImage(): HTMLImageElement | null {
     return this._currentImage;
+  }
+
+  public getCurrentAction(): Action | null {
+    return this._currentAction;
   }
 
   public setImageFiles(files: File[]): void {
@@ -55,37 +61,28 @@ export class ImageUploadService {
 
   public setCachedImage(image: HTMLImageElement): void {
     this.cachedImages.set(image.title, image);
-    this._currentImage = image;
   }
 
   public setCurrentImage(image: HTMLImageElement | null): void {
+    this._currentAction = null;
     this._currentImage = image;
+  }
+
+  public setCurrentAction(action: Action | null): void {
+    this._currentImage = null;
+    this._currentAction = action;
   }
 
   public removeImage(image: HTMLImageElement): void {
     this.cachedImages.delete(image.title);
-    this.setCurrentImageToLastAvailableImage(image);
-
     this._images.next(this.getCachedImages());
-  }
 
-  private setCurrentImageToLastAvailableImage(image: HTMLImageElement): void {
-    if (!this.cachedImages.size) {
-      this.resetCurrentImage();
+
+    if (image.title !== this._currentImage?.title) {
       return;
     }
 
-    if (this._currentImage?.title === image.title) {
-      const cachedImage =  Array.from(this.cachedImages.values()).pop();
-      // tslint:disable-next-line:no-non-null-assertion
-      this.setCurrentImage(cachedImage!);
-    }
-  }
-
-  private resetCurrentImage(): void {
-    if (!this.cachedImages.size) {
-      this.setCurrentImage(null);
-    }
+    this.setCurrentImage(null);
   }
 
   private getCachedImages(): HTMLImageElement[] {

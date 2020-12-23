@@ -1,11 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ImageUploadService } from '../image-upload/image-upload.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-
-interface Action {
-  type: string;
-  callback: () => void;
-}
+import { Action } from './toolbar.types';
 
 @Component({
   selector: 'app-toolbar',
@@ -18,7 +14,6 @@ export class ToolbarComponent {
   public actions: Action[] = [
     {
       type: 'delete',
-      callback: () => { console.log('delete'); },
     },
   ];
   constructor(
@@ -30,18 +25,13 @@ export class ToolbarComponent {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
 
-  public onToolbarItemClick(item: Action | HTMLImageElement): void {
-    if (this.isAction(item)) {
-      this.imageService.setCurrentImage(null);
-      item.callback();
-    } else {
-      this.imageService.setCurrentImage(item);
-    }
-
-    this.currentItem = item;
+  public onToolbarImageClick(image: HTMLImageElement): void {
+    this.imageService.setCurrentImage(image);
+    this.currentItem = image;
   }
 
-  private isAction(item: Action | HTMLImageElement): item is Action {
-    return !!(item as Action).callback;
+  public onToolbarActionClick(action: Action): void {
+    this.imageService.setCurrentAction(action);
+    this.currentItem = action;
   }
 }

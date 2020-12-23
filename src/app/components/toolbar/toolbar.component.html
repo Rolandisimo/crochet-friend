@@ -3,16 +3,14 @@
   <div
     *ngFor="let action of actions"
     class="imageContainer action"
-    [ngClass]="{
-      isSelected: currentItem === action
-    }"
-    (click)="onToolbarItemClick(action)"
+    [class.isSelected]="currentItem === action"
+    (click)="onToolbarActionClick(action)"
   >
     {{action.type}}
   </div>
 </div>
 
-<h3>My Images</h3>
+<h3>Images</h3>
 <div class="imagesContainer">
   <div
     *ngFor="let image of imageService.images | async"
@@ -23,12 +21,14 @@
   >
     <img
       [src]="sanitize(image.src)"
-      (click)="onToolbarItemClick(image)"
+      (click)="onToolbarImageClick(image)"
       [ngStyle]="{
         'width.px': image.width,
         'height.px': image.height
       }"
     />
-    <button class="removeImageIcon" (click)="imageService.removeImage(image)">x</button>
+    <button class="removeImageIcon" (click)="imageService.removeImage(image)">
+      -
+    </button>
   </div>
 </div>
