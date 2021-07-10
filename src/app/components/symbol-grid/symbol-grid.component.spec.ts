@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SymbolGridComponent } from './symbol-grid.component';
 
@@ -6,7 +6,7 @@ describe('SymbolGridComponent', () => {
   let component: SymbolGridComponent;
   let fixture: ComponentFixture<SymbolGridComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SymbolGridComponent ]
     })
