@@ -1,10 +1,18 @@
 :host {
-  position: relative;
-  display: block;
+    position: relative;
+    display: block;
+}
+
+.gridControls {
+    margin-bottom: 1em;
+}
+
+.canvasContainer {
+    position: relative;
 }
 
 canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
 }

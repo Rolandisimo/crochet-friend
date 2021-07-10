@@ -2,36 +2,50 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export interface GridDimensions {
-  columns: number;
-  rows: number;
+    columns: number;
+    rows: number;
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class GridService {
-  private cellWidth = 64;
-  private cellHeight = 64;
-  private numberOfColumns = 50;
-  private numberOfRows = 50;
+    private cellWidth = 32;
+    private cellHeight = 32;
+    private numberOfColumns = 10;
+    private numberOfRows = 10;
 
-  private _gridDimensions = new BehaviorSubject<GridDimensions>({ columns: this.numberOfColumns, rows: this.numberOfRows });
-  public gridDimensions = this._gridDimensions.asObservable();
+    private _gridDimensions = new BehaviorSubject<GridDimensions>({
+        columns: this.numberOfColumns,
+        rows: this.numberOfRows,
+    });
+    public gridDimensions = this._gridDimensions.asObservable();
 
-  setGrid(dimensions: GridDimensions): void {
-    this._gridDimensions.next(dimensions);
-  }
+    setGrid(dimensions: GridDimensions): void {
+        this._gridDimensions.next(dimensions);
+    }
 
-  public getCellWidth(): number {
-    return this.cellWidth;
-  }
-  public getCellHeight(): number {
-    return this.cellHeight;
-  }
-  public getNumberOfColumns(): number {
-    return this.numberOfColumns;
-  }
-  public getNumberOfRows(): number {
-    return this.numberOfRows;
-  }
+    public addColumn(): void {
+        this.numberOfColumns++;
+        console.log(this.numberOfColumns);
+        this._gridDimensions.next({ columns: this.numberOfColumns, rows: this.numberOfRows });
+    }
+
+    public addRow(): void {
+        this.numberOfRows++;
+        this._gridDimensions.next({ columns: this.numberOfColumns, rows: this.numberOfRows });
+    }
+
+    public getCellWidth(): number {
+        return this.cellWidth;
+    }
+    public getCellHeight(): number {
+        return this.cellHeight;
+    }
+    public getNumberOfColumns(): number {
+        return this.numberOfColumns;
+    }
+    public getNumberOfRows(): number {
+        return this.numberOfRows;
+    }
 }

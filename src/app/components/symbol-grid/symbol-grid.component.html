@@ -1,2 +1,8 @@
-<canvas #gridCanvas id="grid"></canvas>
-<canvas #overlayCanvas id="overlay"></canvas>
+<div class="gridControls">
+    <button (click)="addColumnLeft()">Add column left</button>
+    <button>Add column right</button>
+</div>
+<div class="canvasContainer">
+    <canvas #gridCanvas id="grid"></canvas>
+    <canvas #overlayCanvas id="overlay"></canvas>
+</div>

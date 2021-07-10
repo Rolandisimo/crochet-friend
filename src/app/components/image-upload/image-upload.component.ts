@@ -1,54 +1,48 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import {
-  Validators,
-  FormBuilder,
-  FormControl,
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ImageUploadService } from './image-upload.service';
+
 import { allowedTypes } from './file-upload/allowedTypes';
+import { ImageUploadService } from './image-upload.service';
 
 function isFileUploadValid(control: FormControl): any {
-  const files: any[] = control.value;
-  if (!files) {
-    return null;
-  }
-  const isValid = files.every(file => allowedTypes.includes(file.type));
-  if (isValid) {
-    return null;
-  } else {
-    control.setErrors({ fileValid: false });
-    return { fileValid: false };
-  }
+    const files: any[] = control.value;
+    if (!files) {
+        return null;
+    }
+    const isValid = files.every((file) => allowedTypes.includes(file.type));
+    if (isValid) {
+        return null;
+    } else {
+        control.setErrors({ fileValid: false });
+        return { fileValid: false };
+    }
 }
 
 @Component({
-  selector: 'app-image-upload',
-  templateUrl: './image-upload.component.html',
-  styleUrls: ['./image-upload.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-image-upload',
+    templateUrl: './image-upload.component.html',
+    styleUrls: ['./image-upload.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageUploadComponent implements OnDestroy {
-  private subscription = new Subscription();
+    private subscription = new Subscription();
 
-  constructor(
-    private fb: FormBuilder,
-    private imageUpload: ImageUploadService,
-  ) {}
+    constructor(private fb: FormBuilder, private imageUpload: ImageUploadService) {}
 
-  public imageUploadForm = this.fb.group({
-    uploadedImage: [[], [Validators.required, isFileUploadValid]],
-  });
+    public imageUploadForm = this.fb.group({
+        uploadedImage: [[], [Validators.required, isFileUploadValid]],
+    });
 
-  get imageControl(): FormControl {
-    return this.imageUploadForm.get('uploadedImage') as FormControl;
-  }
+    get imageControl(): FormControl {
+        return this.imageUploadForm.get('uploadedImage') as FormControl;
+    }
 
-  onImageUpload(files: File[]): void {
-    this.imageUpload.setImageFiles(files);
-  }
+    onImageUpload(files: File[]): void {
+        this.imageUpload.setImageFiles(files);
+    }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
 }

@@ -15,23 +15,23 @@ class SimpleCommand implements Command {
 }
 
 /**
-* However, some commands can delegate more complex operations to other objects,
-* called "receivers."
-*/
+ * However, some commands can delegate more complex operations to other objects,
+ * called "receivers."
+ */
 class ComplexCommand implements Command {
     private receiver: Receiver;
 
     /**
-    * Context data, required for launching the receiver's methods.
-    */
+     * Context data, required for launching the receiver's methods.
+     */
     private a: string;
 
     private b: string;
 
     /**
-    * Complex commands can accept one or several receiver objects along with
-    * any context data via the constructor.
-    */
+     * Complex commands can accept one or several receiver objects along with
+     * any context data via the constructor.
+     */
     constructor(receiver: Receiver, a: string, b: string) {
         this.receiver = receiver;
         this.a = a;
@@ -39,8 +39,8 @@ class ComplexCommand implements Command {
     }
 
     /**
-    * Commands can delegate to any methods of a receiver.
-    */
+     * Commands can delegate to any methods of a receiver.
+     */
     public execute(): void {
         console.log('ComplexCommand: Complex stuff should be done by a receiver object.');
         this.receiver.doSomething(this.a);
@@ -49,10 +49,10 @@ class ComplexCommand implements Command {
 }
 
 /**
-* The Receiver classes contain some important business logic. They know how to
-* perform all kinds of operations, associated with carrying out a request. In
-* fact, any class may serve as a Receiver.
-*/
+ * The Receiver classes contain some important business logic. They know how to
+ * perform all kinds of operations, associated with carrying out a request. In
+ * fact, any class may serve as a Receiver.
+ */
 class Receiver {
     public doSomething(a: string): void {
         console.log(`Receiver: Working on (${a}.)`);
@@ -64,17 +64,17 @@ class Receiver {
 }
 
 /**
-* The Invoker is associated with one or several commands. It sends a request to
-* the command.
-*/
+ * The Invoker is associated with one or several commands. It sends a request to
+ * the command.
+ */
 class Invoker {
     private onStart: Command;
 
     private onFinish: Command;
 
     /**
-    * Initialize commands.
-    */
+     * Initialize commands.
+     */
     public setOnStart(command: Command): void {
         this.onStart = command;
     }
@@ -84,10 +84,10 @@ class Invoker {
     }
 
     /**
-    * The Invoker does not depend on concrete command or receiver classes. The
-    * Invoker passes a request to a receiver indirectly, by executing a
-    * command.
-    */
+     * The Invoker does not depend on concrete command or receiver classes. The
+     * Invoker passes a request to a receiver indirectly, by executing a
+     * command.
+     */
     public doSomethingImportant(): void {
         console.log('Invoker: Does anybody want something done before I begin?');
         if (this.isCommand(this.onStart)) {

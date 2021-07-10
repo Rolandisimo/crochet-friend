@@ -1,5 +1,1 @@
-export const allowedTypes = [
-  'image/svg+xml',
-  'image/jpeg',
-  'image/png',
-];
+export const allowedTypes = ['image/svg+xml', 'image/jpeg', 'image/png'];

@@ -1,17 +1,17 @@
 .uploadArea {
-  display: flex;
-  align-items: center;
-  padding: 1em;
-  border: 1px dashed;
-  margin: 1em 0;
+    display: flex;
+    align-items: center;
+    padding: 1em;
+    border: 1px dashed;
+    margin: 1em 0;
 }
 .uploadLabel {
-  padding: .5em 1em;
-  border: 1px solid;
-  margin-right: 1em;
-  cursor: pointer;
+    padding: 0.5em 1em;
+    border: 1px solid;
+    margin-right: 1em;
+    cursor: pointer;
 
-  &:hover {
-    background-color: grey;
-  }
+    &:hover {
+        background-color: grey;
+    }
 }
