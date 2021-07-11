@@ -1,6 +1,6 @@
-<div class="uploadArea">
-    <label class="uploadLabel" for="imageUpload">Upload image</label>
+<div class="flex items-center p-4 border-dashed border-2">
+    <label class="cursor-pointer border-2 px-4 py-2 mr-4 hover:bg-gray-100" for="imageUpload">Upload image</label>
     <p *ngIf="files.length">Uploaded {{ files.length }} files</p>
 
-    <input id="imageUpload" style="display: none" type="file" [attr.accept]="acceptExtensions" multiple />
+    <input id="imageUpload" class="hidden" type="file" [attr.accept]="acceptExtensions" multiple />
 </div>

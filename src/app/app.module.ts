@@ -9,9 +9,9 @@ import { SymbolGridModule } from './components/symbol-grid/symbol-grid.module';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 
 @NgModule({
-    declarations: [AppComponent, InputComponent, ToolbarComponent],
-    imports: [BrowserModule, AppRoutingModule, SymbolGridModule, ImageUploadModule],
-    providers: [],
-    bootstrap: [AppComponent],
+  declarations: [AppComponent, InputComponent, ToolbarComponent],
+  imports: [BrowserModule, AppRoutingModule, SymbolGridModule, ImageUploadModule],
+  providers: [],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}
