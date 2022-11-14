@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { allowedTypes } from './file-upload/allowedTypes';
 import { ImageUploadService } from './image-upload.service';
 
-function isFileUploadValid(control: FormControl): any {
+function isFileUploadValid(control: UntypedFormControl): any {
   const files: any[] = control.value;
   if (!files) {
     return null;
@@ -28,14 +28,14 @@ function isFileUploadValid(control: FormControl): any {
 export class ImageUploadComponent implements OnDestroy {
   private subscription = new Subscription();
 
-  constructor(private fb: FormBuilder, private imageUpload: ImageUploadService) {}
+  constructor(private fb: UntypedFormBuilder, private imageUpload: ImageUploadService) {}
 
   public imageUploadForm = this.fb.group({
     uploadedImage: [[], [Validators.required, isFileUploadValid]],
   });
 
-  get imageControl(): FormControl {
-    return this.imageUploadForm.get('uploadedImage') as FormControl;
+  get imageControl(): UntypedFormControl {
+    return this.imageUploadForm.get('uploadedImage') as UntypedFormControl;
   }
 
   onImageUpload(files: File[]): void {
