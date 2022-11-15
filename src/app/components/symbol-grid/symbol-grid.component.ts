@@ -13,22 +13,7 @@ import { map, tap } from 'rxjs/operators';
 import { ImageUploadService } from '../image-upload/image-upload.service';
 import { GridService } from './grid.service';
 import { GridImageCoordinator } from './grid-image-coordinator';
-
-interface LineSetupOptions {
-  stepSize: number;
-  endPosition: number;
-}
-
-interface Coordinates {
-  x: number;
-  y: number;
-}
-
-interface ImageWithCoordinates {
-  image: HTMLImageElement;
-  x: number;
-  y: number;
-}
+import { Coordinates, ImageWithCoordinates, LineSetupOptions } from './symbol-grid.model';
 
 @Component({
   selector: 'app-symbol-grid',
@@ -76,10 +61,8 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.canvasElement.width = width;
-    this.canvasElement.height = width;
-    this.overlayElement.width = width;
-    this.overlayElement.height = width;
+    this.setOverlayElementDimensions(width, width);
+    this.setCanvasElementDimensions(width, width);
 
     this.setGrid();
 
@@ -111,11 +94,27 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.context = this.canvasElement.getContext('2d');
     this.overlayCanvasContext = this.overlayElement.getContext('2d');
+
+    this.disableContextSmoothing();
+
+    this.update();
+  }
+
+  private disableContextSmoothing(): void {
     if (!this.context || !this.overlayCanvasContext) {
       throw new Error('Context is not set');
     }
 
-    this.update();
+    const context = this.context as any;
+    const overlayCanvasContext = this.overlayCanvasContext as any;
+    context.mozImageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.msImageSmoothingEnabled = false;
+    context.imageSmoothingEnabled = false;
+    overlayCanvasContext.mozImageSmoothingEnabled = false;
+    overlayCanvasContext.webkitImageSmoothingEnabled = false;
+    overlayCanvasContext.msImageSmoothingEnabled = false;
+    overlayCanvasContext.imageSmoothingEnabled = false;
   }
 
   private setCanvasDimensions(): void {
@@ -123,10 +122,26 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.canvasElement.width = this.cellWidth * this.numberOfColumns;
-    this.canvasElement.height = this.cellHeight * this.numberOfRows;
-    this.overlayElement.width = this.canvasElement.width;
-    this.overlayElement.height = this.canvasElement.height;
+    this.setCanvasElementDimensions(this.cellWidth * this.numberOfColumns, this.cellHeight * this.numberOfRows);
+    this.setOverlayElementDimensions(this.canvasElement.width, this.canvasElement.height);
+  }
+
+  private setCanvasElementDimensions(width: number, height: number): void {
+    if (!this.canvasElement) {
+      throw new Error('Setting canvas element size before the element is set');
+    }
+
+    this.canvasElement.width = width;
+    this.canvasElement.height = height;
+  }
+
+  private setOverlayElementDimensions(width: number, height: number): void {
+    if (!this.overlayElement) {
+      throw new Error('Setting overlay element size before the element is set');
+    }
+
+    this.overlayElement.width = width;
+    this.overlayElement.height = height;
   }
 
   private redrawAllImages(): void {
@@ -270,9 +285,9 @@ export class SymbolGridComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.overlayCanvasContext) {
       return;
     }
+    this.disableContextSmoothing();
 
-    this.overlayCanvasContext.imageSmoothingEnabled = false;
-    this.overlayCanvasContext?.drawImage(
+    this.overlayCanvasContext.drawImage(
       image,
       0,
       0,

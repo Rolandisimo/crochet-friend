@@ -12,8 +12,8 @@ export interface GridDimensions {
 export class GridService {
   private cellWidth = 32;
   private cellHeight = 32;
-  private numberOfColumns = 10;
-  private numberOfRows = 10;
+  private numberOfColumns = 50;
+  private numberOfRows = 50;
 
   private gridDimensions = new BehaviorSubject<GridDimensions>({
     columns: this.numberOfColumns,
